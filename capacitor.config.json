@@ -1,0 +1,8 @@
+{
+  "appId": "com.riyad.notes",
+  "appName": "Notes",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

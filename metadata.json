@@ -1,0 +1,8 @@
+{
+  "name": "Remix Notes1",
+  "description": "A minimal, distraction-free notes and folder workspace.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

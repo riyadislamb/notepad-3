@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Notes — Capture your thoughts</title>
+    <meta name="description" content="A minimal, distraction-free notes and folder workspace." />
+    <meta property="og:title" content="Notes — Capture your thoughts" />
+    <meta property="og:description" content="A minimal, distraction-free notes and folder workspace." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/assets/aistudio/Applogo.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/assets/aistudio/Applogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('notes_app_state_v2');
+          var parsed = raw ? JSON.parse(raw) : null;
+          var isDark =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var root = document.documentElement;
+          if (isDark) root.classList.add('dark');
+          if (parsed && parsed.palette && parsed.palette !== 'default') {
+            root.setAttribute('data-palette', parsed.palette);
+          }
+          if (parsed && parsed.noteFontSize !== undefined) {
+            var rawSize = parsed.noteFontSize;
+            var pxSize = 16;
+            if (rawSize === 'small') pxSize = 14;
+            else if (rawSize === 'medium') pxSize = 16;
+            else if (rawSize === 'large') pxSize = 19;
+            else if (typeof rawSize === 'number' && isFinite(rawSize)) {
+              pxSize = Math.min(24, Math.max(12, Math.round(rawSize)));
+            }
+            root.style.setProperty('--note-font-size', pxSize + 'px');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-[var(--bg-canvas)] text-[var(--text-primary)] antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

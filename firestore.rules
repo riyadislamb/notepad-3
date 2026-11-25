@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // =========================================================
+    // Shared Helper Functions (reuse across all future rules)
+    // =========================================================
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && request.auth.token.email == 'riyadislambdd@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isNonEmptyString(val, maxLen) {
+      return val is string && val.size() > 0 && val.size() <= maxLen;
+    }
+
+    // =========================================================
+    // 1. App Config (preview_mode, about_app, and any future config docs)
+    // =========================================================
+    match /app_config/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // =========================================================
+    // 2. Help & Support Messages
+    // =========================================================
+    match /support_messages/{ticketId} {
+      allow create: if isNonEmptyString(request.resource.data.userEmail, 200)
+        && isNonEmptyString(request.resource.data.subject, 200)
+        && isNonEmptyString(request.resource.data.message, 5000)
+        && request.resource.data.status == 'open'
+        && (!('userName' in request.resource.data) || request.resource.data.userName is string)
+        && (!('userUid' in request.resource.data) || request.resource.data.userUid == null || request.resource.data.userUid is string);
+
+      allow read, update, delete: if isAdmin();
+    }
+
+    // =========================================================
+    // 3. Per-User Private Data (future user-specific collections)
+    // =========================================================
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+
+      match /{subcollection=**} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    // =========================================================
+    // 4. Add Future Feature Rules Below This Line
+    //    (Separate match blocks never affect existing rules above)
+    // =========================================================
+
+    // Default deny for any unlisted collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
